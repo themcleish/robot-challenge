@@ -40,12 +40,11 @@ public class RobotServiceImpl implements RobotService{
     /**
      * Checks if position is legal - inside table bounds.
      *
-     * @param position
+     * @param position to be checked.
      * @return true if legal, otherwise false.
      */
     private boolean isLegalPosition(Position position) {
-        return position.x() >= 0 && position.x() < table.width()
-                && position.y() >= 0 && position.y() < table.height();
+        return table.isInside(position);
     }
 
     /**
