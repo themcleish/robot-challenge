@@ -1,4 +1,3 @@
 package com.cat.robot;
 
-public record RobotState(Position position, Direction direction) {
-}
+public record RobotState(Position position, Direction direction, boolean isPlaced) {}
