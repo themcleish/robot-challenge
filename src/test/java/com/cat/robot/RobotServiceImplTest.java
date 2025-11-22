@@ -63,6 +63,27 @@ class RobotServiceImplTest {
     }
 
     @Test
+    void test_validMovesAllowedAfterInvalidMove() {
+        Position startPosition = new Position(1,4);
+        Direction startDirection = Direction.NORTH;
+        robotService.place(startPosition, startDirection);
+
+        // Ignored Move
+        robotService.move();
+
+        // Some valid commands
+        robotService.turnRight();
+        robotService.turnRight();
+        robotService.move();
+
+        Direction finalExpectedDirection = Direction.SOUTH;
+        Position finalExpectedPosition = new Position(1,3);
+        RobotState state = robotService.getReport();
+        assertEquals(finalExpectedPosition, state.position());
+        assertEquals(finalExpectedDirection, state.direction());
+    }
+
+    @Test
     void test_canTurnLeft() {
         Position startPosition = new Position(1,1);
         Direction startDirection = Direction.NORTH;
@@ -98,5 +119,17 @@ class RobotServiceImplTest {
         robotService.move();
 
         assertFalse(robotService.getReport().isPlaced());
+
+        // Further valid movements allowed
+        Position secondStartPosition = new Position(1,1);
+        robotService.place(secondStartPosition, startDirection);
+        robotService.turnLeft();
+        robotService.move();
+
+        Direction finalExpectedDirection = Direction.WEST;
+        Position finalExpectedPosition = new Position(0,1);
+        RobotState state = robotService.getReport();
+        assertEquals(finalExpectedPosition, state.position());
+        assertEquals(finalExpectedDirection, state.direction());
     }
 }
