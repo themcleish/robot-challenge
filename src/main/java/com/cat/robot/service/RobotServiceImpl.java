@@ -138,4 +138,10 @@ public class RobotServiceImpl implements RobotService {
 
         place(new Position(command.x(), command.y()), command.direction());
     }
+
+    @Override
+    public void reset() {
+        robot.reset();
+        log.info("Robot has been reset and removed from the table");
+    }
 }

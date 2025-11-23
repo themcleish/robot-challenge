@@ -221,4 +221,24 @@ class RobotServiceImplTest {
         assertEquals(expectedFinalPosition, finalState.position());
         assertEquals(expectedFinalDirection, finalState.direction());
     }
+
+    @Test
+    void test_reset_clearsRobotState() {
+        Position startPosition = new Position(1,1);
+        Direction startDirection = Direction.NORTH;
+
+        robotService.place(startPosition, startDirection);
+
+        RobotState placedState = robotService.getReport();
+        assertTrue(placedState.isPlaced());
+        assertEquals(startPosition, placedState.position());
+        assertEquals(startDirection, placedState.direction());
+
+        robotService.reset();
+
+        RobotState resetState = robotService.getReport();
+        assertFalse(resetState.isPlaced());
+        assertNull(resetState.position());
+        assertNull(resetState.direction());
+    }
 }

@@ -77,10 +77,15 @@ public class RobotController {
         return ResponseEntity.ok(state);
     }
 
-
     @PostMapping("/commands")
     public ResponseEntity<RobotState> executeCommands(@RequestBody List<CommandDTO> commands) {
         RobotState finalState = robotService.executeCommands(commands);
         return ResponseEntity.ok(finalState);
+    }
+
+    @PostMapping("/reset")
+    public ResponseEntity<Void> reset() {
+        robotService.reset();
+        return ResponseEntity.ok().build();
     }
 }

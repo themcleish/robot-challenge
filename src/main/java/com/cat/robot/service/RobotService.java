@@ -54,4 +54,9 @@ public interface RobotService {
      * @return robot state.
      */
     RobotState executeCommands(List<CommandDTO> commands);
+
+    /**
+     * Removes the robot from the table.
+     */
+    void reset();
 }

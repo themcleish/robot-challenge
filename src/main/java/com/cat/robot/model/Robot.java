@@ -35,4 +35,10 @@ public class Robot {
     public void turnRight() {
         this.direction = this.direction.turnRight();
     }
+
+    public void reset() {
+        this.position = null;
+        this.direction = null;
+        this.placed = false;
+    }
 }
