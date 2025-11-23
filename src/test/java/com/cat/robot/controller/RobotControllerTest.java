@@ -1,5 +1,9 @@
-package com.cat.robot;
+package com.cat.robot.controller;
 
+import com.cat.robot.model.Direction;
+import com.cat.robot.model.Position;
+import com.cat.robot.model.RobotState;
+import com.cat.robot.service.RobotService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;

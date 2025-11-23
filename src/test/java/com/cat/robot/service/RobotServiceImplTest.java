@@ -1,9 +1,16 @@
-package com.cat.robot;
+package com.cat.robot.service;
+
+import com.cat.robot.dto.CommandDTO;
+import com.cat.robot.exception.RobotNotAdjustedException;
+import com.cat.robot.exception.RobotNotPlacedException;
+import com.cat.robot.model.Direction;
+import com.cat.robot.model.Position;
+import com.cat.robot.model.RobotState;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 

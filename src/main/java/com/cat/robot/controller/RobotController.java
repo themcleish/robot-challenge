@@ -1,5 +1,10 @@
-package com.cat.robot;
+package com.cat.robot.controller;
 
+import com.cat.robot.dto.CommandDTO;
+import com.cat.robot.dto.PlaceRequestDTO;
+import com.cat.robot.model.Position;
+import com.cat.robot.model.RobotState;
+import com.cat.robot.service.RobotService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

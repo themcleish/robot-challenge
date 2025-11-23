@@ -1,4 +1,4 @@
-package com.cat.robot;
+package com.cat.robot.model;
 
 public record Table(int width, int height) {
 

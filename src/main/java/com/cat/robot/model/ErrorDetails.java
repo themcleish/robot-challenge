@@ -1,4 +1,4 @@
-package com.cat.robot;
+package com.cat.robot.model;
 
 import java.util.Date;
 

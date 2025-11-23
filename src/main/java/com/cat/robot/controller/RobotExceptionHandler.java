@@ -1,5 +1,8 @@
-package com.cat.robot;
+package com.cat.robot.controller;
 
+import com.cat.robot.exception.RobotNotAdjustedException;
+import com.cat.robot.exception.RobotNotPlacedException;
+import com.cat.robot.model.ErrorDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

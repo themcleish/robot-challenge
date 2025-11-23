@@ -1,5 +1,9 @@
-package com.cat.robot;
+package com.cat.robot.service;
 
+import com.cat.robot.dto.CommandDTO;
+import com.cat.robot.exception.RobotNotAdjustedException;
+import com.cat.robot.exception.RobotNotPlacedException;
+import com.cat.robot.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class RobotServiceImpl implements RobotService{
+public class RobotServiceImpl implements RobotService {
 
     private static final Logger log = LoggerFactory.getLogger(RobotServiceImpl.class);
 
