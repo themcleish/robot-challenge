@@ -1,5 +1,7 @@
 package com.cat.robot;
 
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +35,21 @@ class RobotServiceImplTest {
 
         assertFalse(robotService.place(startPosition, startDirection));
         assertFalse(robotService.getReport().isPlaced());
+    }
+
+    @Test
+    void test_canNotPlace_WhenNotExistingRobotAlreadyOnTable() {
+        Position startPosition = new Position(1,1);
+        Direction startDirection = Direction.NORTH;
+        robotService.place(startPosition, startDirection);
+
+        Position secondPosition = new Position(3,2);
+        assertFalse(robotService.place(secondPosition, startDirection));
+
+        RobotState state = robotService.getReport();
+        assertTrue(state.isPlaced());
+        assertEquals(startPosition, state.position());
+        assertEquals(startDirection, state.direction());
     }
 
     @Test
@@ -89,8 +106,7 @@ class RobotServiceImplTest {
         Direction startDirection = Direction.NORTH;
         robotService.place(startPosition, startDirection);
 
-        robotService.turnLeft();
-
+        assertTrue(robotService.turnLeft());
         assertEquals(Direction.WEST, robotService.getReport().direction());
     }
 
@@ -100,8 +116,7 @@ class RobotServiceImplTest {
         Direction startDirection = Direction.NORTH;
         robotService.place(startPosition, startDirection);
 
-        robotService.turnRight();
-
+        assertTrue(robotService.turnRight());
         assertEquals(Direction.EAST, robotService.getReport().direction());
     }
 
@@ -131,5 +146,60 @@ class RobotServiceImplTest {
         RobotState state = robotService.getReport();
         assertEquals(finalExpectedPosition, state.position());
         assertEquals(finalExpectedDirection, state.direction());
+    }
+
+    @Test
+    void test_executeCommands_runsValidSequenceAndUpdatesState() {
+        List<CommandDTO> commands = Arrays.asList(
+                new CommandDTO("PLACE", 1, 1, Direction.NORTH),
+                new CommandDTO("MOVE", null, null, null),
+                new CommandDTO("RIGHT", null, null, null),
+                new CommandDTO("MOVE", null, null, null)
+        );
+
+        RobotState finalState = robotService.executeCommands(commands);
+
+        Position expectedFinalPosition = new Position(2, 2);
+        Direction expectedFinalDirection = Direction.EAST;
+        assertTrue(finalState.isPlaced());
+        assertEquals(expectedFinalPosition, finalState.position());
+        assertEquals(expectedFinalDirection, finalState.direction());
+    }
+
+    @Test
+    void test_executeCommands_ignoresNullAndUnknownCommands() {
+        List<CommandDTO> commands = Arrays.asList(
+                null,
+                new CommandDTO(null, null, null, null),
+                new CommandDTO("SPIN", null, null, null),
+                new CommandDTO("PLACE", 1, 1, Direction.NORTH),
+                new CommandDTO("MOVE", null, null, null),
+                new CommandDTO("WAVE", null, null, null)
+        );
+
+        RobotState finalState = robotService.executeCommands(commands);
+
+        Position expectedFinalPosition = new Position(1, 2);
+        Direction expectedFinalDirection = Direction.NORTH;
+        assertTrue(finalState.isPlaced());
+        assertEquals(expectedFinalPosition, finalState.position());
+        assertEquals(expectedFinalDirection, finalState.direction());
+    }
+
+    @Test
+    void test_executeCommands_handlesInvalidPlaceMissingFields() {
+        List<CommandDTO> commands = Arrays.asList(
+                new CommandDTO("PLACE", null, 1, Direction.NORTH), // missing x
+                new CommandDTO("PLACE", 1, 1, Direction.NORTH),
+                new CommandDTO("MOVE", null, null, null)
+        );
+
+        RobotState finalState = robotService.executeCommands(commands);
+
+        Position expectedFinalPosition = new Position(1, 2);
+        Direction expectedFinalDirection = Direction.NORTH;
+        assertTrue(finalState.isPlaced());
+        assertEquals(expectedFinalPosition, finalState.position());
+        assertEquals(expectedFinalDirection, finalState.direction());
     }
 }
