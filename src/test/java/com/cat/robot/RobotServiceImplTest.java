@@ -33,18 +33,27 @@ class RobotServiceImplTest {
         Position startPosition = new Position(5,1);
         Direction startDirection = Direction.NORTH;
 
-        assertFalse(robotService.place(startPosition, startDirection));
+        RobotNotPlacedException ex = assertThrows(
+                RobotNotPlacedException.class,
+                () -> robotService.place(startPosition, startDirection)
+        );
+        assertEquals("Intended placement outside table bounds", ex.getMessage());
         assertFalse(robotService.getReport().isPlaced());
     }
 
     @Test
-    void test_canNotPlace_WhenNotExistingRobotAlreadyOnTable() {
+    void test_canNotPlace_WhenExistingRobotAlreadyOnTable() {
         Position startPosition = new Position(1,1);
         Direction startDirection = Direction.NORTH;
         robotService.place(startPosition, startDirection);
 
         Position secondPosition = new Position(3,2);
-        assertFalse(robotService.place(secondPosition, startDirection));
+
+        RobotNotPlacedException ex = assertThrows(
+                RobotNotPlacedException.class,
+                () -> robotService.place(secondPosition, startDirection)
+        );
+        assertEquals("Robot already on table", ex.getMessage());
 
         RobotState state = robotService.getReport();
         assertTrue(state.isPlaced());
@@ -72,7 +81,7 @@ class RobotServiceImplTest {
         Direction startDirection = Direction.NORTH;
         robotService.place(startPosition, startDirection);
 
-        assertFalse(robotService.move());
+        assertThrows(RobotNotAdjustedException.class, () -> robotService.move());
 
         RobotState state = robotService.getReport();
         assertEquals(startPosition, state.position());
@@ -86,7 +95,7 @@ class RobotServiceImplTest {
         robotService.place(startPosition, startDirection);
 
         // Ignored Move
-        robotService.move();
+        assertThrows(RobotNotAdjustedException.class, () -> robotService.move());
 
         // Some valid commands
         robotService.turnRight();
@@ -125,14 +134,17 @@ class RobotServiceImplTest {
         Position startPosition = new Position(5,1);
         Direction startDirection = Direction.NORTH;
 
-        // Never actually placed as out of bounds.
-        robotService.place(startPosition, startDirection);
+        assertThrows(RobotNotPlacedException.class,
+                () -> robotService.place(startPosition, startDirection));
+        assertFalse(robotService.getReport().isPlaced());
 
-        // These shouldn't block anything just log attempts
-        robotService.turnRight();
-        robotService.move();
-        robotService.move();
-
+        // These should throw appropriate exceptions
+        assertThrows(RobotNotAdjustedException.class,
+                () -> robotService.turnRight());
+        assertThrows(RobotNotAdjustedException.class,
+                () -> robotService.move());
+        assertThrows(RobotNotAdjustedException.class,
+                () -> robotService.move());
         assertFalse(robotService.getReport().isPlaced());
 
         // Further valid movements allowed

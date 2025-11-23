@@ -24,13 +24,13 @@ public class RobotServiceImpl implements RobotService{
     public boolean place(Position position, Direction direction) {
         if (robot.isPlaced()) {
             log.warn("Robot placement FAILED, robot already on table at {} facing {}", robot.getPosition(), robot.getDirection());
-            return false;
+            throw new RobotNotPlacedException("Robot already on table");
         }
 
         if (isNotLegalPosition(position)) {
             log.warn("Robot placement FAILED at {} — outside table bounds. Current bounds = X=0..{}, Y=0..{}",
                     position, table.width() - 1, table.height() - 1);
-            return false;
+            throw new RobotNotPlacedException("Intended placement outside table bounds");
         }
 
         robot.place(position, direction);
@@ -51,15 +51,15 @@ public class RobotServiceImpl implements RobotService{
     @Override
     public boolean move() {
         if (!robot.isPlaced()) {
-            log.warn("Move ignored as no robot placed");
-            return false;
+            log.warn("Robot move ignored as no robot placed");
+            throw new RobotNotAdjustedException("Robot move ignored as no robot placed");
         }
 
         Position possibleFuturePosition = robot.getPosition().move(robot.getDirection());
         if (isNotLegalPosition(possibleFuturePosition)) {
             log.warn("Robot movement FAILED, {} — outside table bounds. Current bounds = X=0..{}, Y=0..{}",
                     possibleFuturePosition, table.width() - 1, table.height() - 1);
-            return false;
+            throw new RobotNotAdjustedException("Move ignored as intended location outside table bounds");
         }
 
         robot.updatePosition(possibleFuturePosition);
@@ -70,8 +70,8 @@ public class RobotServiceImpl implements RobotService{
     @Override
     public boolean turnLeft() {
         if (!robot.isPlaced()) {
-            log.warn("Left turn ignored as no robot placed");
-            return false;
+            log.warn("Robot left turn ignored as no robot placed");
+            throw new RobotNotAdjustedException("Robot left turn ignored as no robot placed");
         }
 
         robot.turnLeft();
@@ -82,8 +82,8 @@ public class RobotServiceImpl implements RobotService{
     @Override
     public boolean turnRight() {
         if (!robot.isPlaced()) {
-            log.warn("Right turn ignored as no robot placed");
-            return false;
+            log.warn("Robot right turn ignored as no robot placed");
+            throw new RobotNotAdjustedException("Robot right turn ignored as no robot placed");
         }
 
         robot.turnRight();
@@ -110,12 +110,16 @@ public class RobotServiceImpl implements RobotService{
 
             String type = command.type().trim().toUpperCase();
 
-            switch (type) {
-                case "PLACE" -> handlePlaceCommand(command);
-                case "MOVE"  -> move();
-                case "LEFT"  -> turnLeft();
-                case "RIGHT" -> turnRight();
-                default -> log.warn("Unknown command type '{}' ignored", command.type());
+            try {
+                switch (type) {
+                    case "PLACE" -> handlePlaceCommand(command);
+                    case "MOVE"  -> move();
+                    case "LEFT"  -> turnLeft();
+                    case "RIGHT" -> turnRight();
+                    default      -> log.warn("Unknown command type '{}' ignored", command.type());
+                }
+            } catch (RobotNotPlacedException | RobotNotAdjustedException ex) {
+                log.debug("{} command ignored during batch execution", type);
             }
         }
 
